@@ -17,11 +17,18 @@ class simulation
 		std :: vector<UE> userTable;
 		std :: vector<FAP> FAPTable;
 		std :: vector<MBS> MBSTable;
+		std :: vector<double> FAPEnergy;
+		std :: vector<double> MBSEnergy;
+
 		void init();
 		void simulateTimeFrame();
 		void simulateMovables();
 		void simulateFrontHaul();
 		void simulateBackHaul();
+		void calculateEnergyConsumption();
+		void calculateEnergyConsumptionWithChannel();
+		void printResults();
+
 };
 
 void simulation :: init()
@@ -63,7 +70,9 @@ void simulation :: simulateTimeFrame()
 		simulateMovables();
 		simulateFrontHaul();
 		simulateBackHaul();
+		calculateEnergyConsumption();
 	}
+	printResults();
 }
 
 
@@ -80,6 +89,7 @@ void simulation :: simulateMovables()
 	}
 }
 
+
 void simulation :: simulateFrontHaul()
 {
 	scheme simulationScheme;
@@ -90,7 +100,71 @@ void simulation :: simulateFrontHaul()
 void simulation :: simulateBackHaul()
 {
 	scheme simulationScheme;
-	simulationScheme.breathing(FAPTable, MBSTable);
+	simulationScheme.maxRSRP(FAPTable, MBSTable);
 }
 
+void simulation :: calculateEnergyConsumption()
+{
+	double totalE = 0.0;
+
+	for(auto fap : FAPTable)
+	{
+		totalE = totalE + fap.currentPower*SUB_CHANNELS;
+	}
+
+	FAPEnergy.push_back(totalE);
+
+	totalE = 0;
+
+	for(auto mbs : MBSTable)
+	{
+		for(auto energy : mbs.powerLevelAtSubChannel)
+		{
+			totalE = totalE + energy;
+		}
+	}
+
+	MBSEnergy.push_back(totalE);
+}
+
+void simulation :: calculateEnergyConsumptionWithChannel()
+{
+	double totalE = 0.0;
+
+	for(auto fap : FAPTable)
+	{
+		for(auto energy : fap.powerLevelAtSubChannel)
+		{
+			totalE = totalE + energy;
+		}
+	}
+
+	FAPEnergy.push_back(totalE);
+
+	totalE = 0;
+
+	for(auto mbs : MBSTable)
+	{
+		for(auto energy : mbs.powerLevelAtSubChannel)
+		{
+			totalE = totalE + energy;
+		}
+	}
+
+	MBSEnergy.push_back(totalE);
+}
+
+void simulation :: printResults()
+{
+	double totalE = 0.0;
+
+	for(auto energy : MBSEnergy)
+		totalE += energy;
+
+	for(auto energy : FAPEnergy)
+		totalE += energy;
+
+	std :: cout << totalE << std :: endl;
+	
+}
 #endif

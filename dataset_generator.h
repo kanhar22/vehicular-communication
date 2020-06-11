@@ -39,8 +39,8 @@ point datasetGenerator :: getRandomPointOutsideRoad()
 {
 	while(1)
 	{
-		double x = getRealNumberInRange(-SIMULATION_SCOPE/2, SIMULATION_SCOPE/2);
-		double y = getRealNumberInRange(-SIMULATION_SCOPE/2, SIMULATION_SCOPE/2);
+		double x = getRealNumberInRange(-SIMULATION_SCOPE/8, SIMULATION_SCOPE/8);
+		double y = getRealNumberInRange(-SIMULATION_SCOPE/8, SIMULATION_SCOPE/8);
 		if(y<-ROAD_WIDTH/2 || y > ROAD_WIDTH/2)
 		{
 			return point(x,y);
@@ -51,10 +51,10 @@ point datasetGenerator :: getRandomPointOutsideRoad()
 
 point datasetGenerator :: movePointOnRoad(point currentPosition)
 {
-	double newx = currentPosition.x + getRealNumberInRange(0,1);
+	double newx = currentPosition.x + getRealNumberInRange(0,10);
 	double newy = currentPosition.y + getRealNumberInRange(
-									std :: max(-0.5,-ROAD_WIDTH/2-currentPosition.y),
-									std :: min( 0.5, ROAD_WIDTH/2-currentPosition.y));
+									std :: max(-5.0,-ROAD_WIDTH/2-currentPosition.y),
+									std :: min( 5.0, ROAD_WIDTH/2-currentPosition.y));
 
 	if(newx > SIMULATION_SCOPE/2)
 	{

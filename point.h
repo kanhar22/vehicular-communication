@@ -7,12 +7,13 @@
 class point
 {
 	public:
-		double x;
+		double x;  
 		double y;
 		point(double _x, double _y);
 		point() {}
 		double distance(point other);
 		double squaredDistance(point other);
+		void   print();
 
 };
 
@@ -32,5 +33,9 @@ double point :: squaredDistance(point other)
 	return (x-other.x)*(x-other.x) + (y-other.y)*(y-other.y);
 }
 
+void point :: print()
+{
+	std :: cout << x << " " << y << std :: endl;
+}
 
 #endif

@@ -21,8 +21,8 @@ UE :: UE(int _id, point _position)
 {
 	id = _id;
 	position = _position;
-	bitRate = 0;
-	double totalSignal = 0;
+	bitRate = 100*1024*8;   // bits/sec
+	totalSignal = 0;
 }
 
 void UE :: moveToNextTimeFrame()

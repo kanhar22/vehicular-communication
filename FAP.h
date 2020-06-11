@@ -16,11 +16,13 @@ class FAP
 		int usedSubChannels;
 		double currentPower;
 		double requiredPowerFromMBS;
+		double bitRate;
 		std :: pair<int,int> channelRangeAtMBS;
 		
 		point position;
 		MBS* associatedMBS;
-		std::vector<UE*> associatedUsers;
+		std::vector<UE> associatedUsers;
+		std :: vector<double> powerLevelAtSubChannel;
 
 		FAP(int _id, point _position);
 		void moveToNextTimeFrame();
@@ -29,11 +31,13 @@ class FAP
 
 FAP :: FAP(int _id, point _position)
 {
-	id = id;
+	id = _id;
+	requiredPowerFromMBS = 0;
 	position = _position;
 	usedSubChannels = 1;
-	currentPower = 100;
+	currentPower = 5;
 	associatedMBS = NULL;
+	bitRate = 0;
 }
 
 void FAP :: moveToNextTimeFrame()
