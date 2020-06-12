@@ -12,13 +12,12 @@
 class simulation
 {
 	public:
-		std :: vector<double> SINRTable;
-		std :: vector<double> bitRateTable;
 		std :: vector<UE> userTable;
 		std :: vector<FAP> FAPTable;
 		std :: vector<MBS> MBSTable;
 		std :: vector<double> FAPEnergy;
 		std :: vector<double> MBSEnergy;
+		std :: vector<double> bitRateTabele;
 
 		void init();
 		void simulateTimeFrame();
@@ -26,7 +25,7 @@ class simulation
 		void simulateFrontHaul();
 		void simulateBackHaul();
 		void calculateEnergyConsumption();
-		void calculateEnergyConsumptionWithChannel();
+		void calculateSystemThroughput();
 		void printResults();
 
 };
@@ -71,6 +70,7 @@ void simulation :: simulateTimeFrame()
 		simulateFrontHaul();
 		simulateBackHaul();
 		calculateEnergyConsumption();
+		calculateSystemThroughput();
 	}
 	printResults();
 }
@@ -100,17 +100,30 @@ void simulation :: simulateFrontHaul()
 void simulation :: simulateBackHaul()
 {
 	scheme simulationScheme;
-	simulationScheme.maxRSRP(FAPTable, MBSTable);
+	simulationScheme.breathing(FAPTable, MBSTable);
 }
 
 void simulation :: calculateEnergyConsumption()
 {
 	double totalE = 0.0;
-
-	for(auto fap : FAPTable)
+	if(FAPTable[0].powerLevelAtSubChannel.size())
 	{
-		totalE = totalE + fap.currentPower*SUB_CHANNELS;
+		for(auto fap : FAPTable)
+		{
+			for(auto energy : fap.powerLevelAtSubChannel)
+			{
+				totalE = totalE + energy;
+			}
+		}
 	}
+	else
+	{
+		for(auto fap : FAPTable)
+		{
+			totalE = totalE + fap.currentPower*SUB_CHANNELS;
+		}
+	}
+	
 
 	FAPEnergy.push_back(totalE);
 
@@ -127,31 +140,14 @@ void simulation :: calculateEnergyConsumption()
 	MBSEnergy.push_back(totalE);
 }
 
-void simulation :: calculateEnergyConsumptionWithChannel()
+void simulation :: calculateSystemThroughput()
 {
-	double totalE = 0.0;
-
+	double bitRate = 0;
 	for(auto fap : FAPTable)
 	{
-		for(auto energy : fap.powerLevelAtSubChannel)
-		{
-			totalE = totalE + energy;
-		}
+		bitRate = bitRate + fap.bitRate;
 	}
-
-	FAPEnergy.push_back(totalE);
-
-	totalE = 0;
-
-	for(auto mbs : MBSTable)
-	{
-		for(auto energy : mbs.powerLevelAtSubChannel)
-		{
-			totalE = totalE + energy;
-		}
-	}
-
-	MBSEnergy.push_back(totalE);
+	bitRateTabele.push_back(bitRate);
 }
 
 void simulation :: printResults()
@@ -159,12 +155,28 @@ void simulation :: printResults()
 	double totalE = 0.0;
 
 	for(auto energy : MBSEnergy)
+	{
 		totalE += energy;
+	}
 
 	for(auto energy : FAPEnergy)
+	{
 		totalE += energy;
+	}
 
-	std :: cout << totalE << std :: endl;
+	std :: cout << "EnergyConsumed = " << totalE/TIME_FRAMES/100 << " Joule" << std :: endl;
+
+	double totalBitRate = 0.0;
+
+	for(auto bitRate : bitRateTabele)
+	{
+		totalBitRate = totalBitRate += bitRate;
+	}
+
+	std :: cout << "Throughput = " << (totalBitRate/TIME_FRAMES)/(1024*1024*8) << " MBPS" << std :: endl;
+
+	std :: cout << "ECR = " << totalE/(totalBitRate/(1024*1024*8)) << " watt/MBPS" << std :: endl;
+
 	
 }
 #endif

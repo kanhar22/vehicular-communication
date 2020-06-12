@@ -1,1 +1,3 @@
-21365.5
+EnergyConsumed = 15.1501 Joule
+Throughput = 48.8281 MBPS
+ECR = 31.0274 watt/MBPS

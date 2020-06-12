@@ -145,7 +145,6 @@ void scheme :: breathing(std :: vector<FAP> &FAPTable, std :: vector<MBS> &MBSTa
 		minDistMBS->associatedFAP.push_back(&fap);
 		fap.associatedMBS = minDistMBS;
 	}
-	
 	for(auto& mbs : MBSTable)
 	{
 		std :: set<FAP*> blockedFAP;
